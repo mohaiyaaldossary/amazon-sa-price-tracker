@@ -1,0 +1,25 @@
+# Web framework & server
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+
+# HTTP requests / SerpApi
+requests==2.32.3
+
+# Database
+SQLAlchemy==2.0.36
+
+# Authentication / password hashing
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+
+# Email validation
+email-validator==2.2.0
+
+# Data validation
+pydantic==2.9.2
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.3.3
