@@ -1,0 +1,267 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://amazon-sa-price-tracker.onrender.com/check-all-prices",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        16
+      ],
+      "id": "5974739b-80dd-4ccd-ba43-1b28cc182add",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        224,
+        16
+      ],
+      "id": "c3018085-2b02-413a-a42a-7f9b1c2db645",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=📈 Price Increased Alert!",
+        "message": "=<h2>📈 Price Increased Alert!</h2>\n\n<p>The price of your tracked product has increased.</p>\n\n<p><strong>Product:</strong> {{$json.product}}</p>\n\n<p><strong>New Price:</strong> {{$json.price}} SAR</p>\n\n<p>\n  <a href=\"{{$json.url}}\">View Product on Amazon</a>\n</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        -224
+      ],
+      "id": "17e52c9d-e8fb-4fa0-bd5d-8927f423e939",
+      "name": "Send a message",
+      "webhookId": "e86ea89b-0a2c-4adc-a07e-7119280e27ec",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MX4GoPMQ8Q5GT408",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "={{ \"increased\" }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "708462d4-bca9-4caf-b6bb-242d95bc7e30"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Price Increased"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d991176a-5caf-4a13-8010-f561bd3ec92a",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "={{\"decreased\"}}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Price Dropped"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "81178258-e3b5-4d3e-9f11-2d213a85bd27",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "={{\"unchanged\"}}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "No Change"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        0
+      ],
+      "id": "0dea27c0-53b6-427b-8b2a-0a74d53013e2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "=🔔 Price Drop Alert!",
+        "message": "=<h2>🎉 Price Drop Alert!</h2>  <p>The price of your tracked product has decreased.</p>  <p><strong>Product:</strong> {{$json.product}}</p>  <p><strong>New Price:</strong> {{$json.price}} SAR</p>  <p>   <a href=\"{{$json.url}}\">     View Product on Amazon   </a> </p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1264,
+        16
+      ],
+      "id": "c81116cb-b3fb-4c68-bbd2-be0a6d90ccd4",
+      "name": "Send a message1",
+      "webhookId": "e86ea89b-0a2c-4adc-a07e-7119280e27ec",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "MX4GoPMQ8Q5GT408",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "products",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        672,
+        16
+      ],
+      "id": "a2201e0b-9c6f-45af-8e80-674d3bdb9f7e",
+      "name": "Split Out"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c897f6b5-0e17-433c-8a8f-5699c0d48343",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0e4b4d414fca6237b508aa277a2a829e35de8ffd2d6bc2898acc863168c8dba1"
+  },
+  "nodeGroups": [],
+  "id": "g0YZKYh3iPtwdA5Y",
+  "tags": []
+}
