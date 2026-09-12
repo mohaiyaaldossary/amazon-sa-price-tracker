@@ -9,6 +9,9 @@ The project uses **React** for the frontend, **FastAPI** for the backend, **Serp
 **Frontend:**  
 https://amazon-sa-price-tracker-frontend.onrender.com
 
+**Frontend Repository:**  
+https://github.com/mohaiyaaldossary/amazon-sa-price-tracker-frontend
+
 **Backend API:**  
 https://amazon-sa-price-tracker.onrender.com
 
